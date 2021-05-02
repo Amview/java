@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!-- 约束文件，“mybatis-3-mapper.dtd”限制，检查在当前文件中出现的标签，属性必须符合mybatis的要求-->
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--    sql映射文件：写sql语句的，mybatis会执行这些sql
+        namespace：命名空间，用dao接口的全限定名称
+        <select>：查询标签
+        <update>：更新数据库操作，写的是update sql语句
+        <delete>：删除，执行delete语句
+        <insert>：插入 -->
+<mapper namespace="org.example.dao.StudentDao">
+
+    <!--select:表示查询操作。
+        id:你要执行的sql语法的唯一标识，mybatis会使用这个id的值来找到要执行的sql语句，可以自定义
+        要求使用接口中的方法名。
+        resultType：表示结果类型的，是sql语句执行后得到的resultSet得到的java对象的类型
+        类型的全限定名称-->
+    <select id="selectStudent" resultType="org.example.domain.Student">
+        select id,name,email,age from student order by  id
+    </select>
+    <insert id="insertStudent" >
+        insert into student values(#{id},#{name},#{email},#{age});
+    </insert>
+
+    <select id="selectForeach" resultType="org.example.domain.Student">
+        select * from student where id in
+
+        <!--collection:表示接口中的方法参数的类型，如果是数组使用array，如果是1ist集合使用listitem:自定义的，表示数组和集合成员的变量
+            open:循环开始是的字符
+            close:循环结束时的字符
+            separator:集合成员之间的分隔符-->
+        <foreach collection="list" item="myid" open="(" close=")" separator=",">
+            #{myid}
+        </foreach>
+    </select>
+
+    <select id="selectForeachTwo" resultType="org.example.domain.Student">
+        select * from student where id in
+        <foreach collection="list" item="stu" open="(" close=")" separator=",">
+            #{stu.id}
+        </foreach>
+    </select>
+
+    <!--多个参数，使用@Param注解-->
+    <select id="selectMultiParam" resultType="org.example.domain.Student">
+        select id,name,email,age from student where name=#{myname} or age=#{myage}
+    </select>
+
+    <!--返回map，列明是map的key，列值是map的value,只能最多返回一行记录，多余一行是错误-->
+    <select id="selectMapById" resultType="java.util.HashMap">
+        select id,name,email from student where id =#{stuId}
+    </select>
+
+    <!--resultmap:结果映射，指定列名和java对象的属性对应关系
+        1，自定义列值赋值给哪个属性
+        2，当列名和属性名不一样时，一定使用resultMap
+        3，定义resultMap
+           id:自定义名称，表示你定义的这个resultMaptype : java类型的全限定名称-->
+    <resultMap id="studentMap" type="org.example.domain.Student">
+        <!--列名和java属性的关系
+            注解列，使用id标签
+            column：列名
+            property：java类型的属性名-->
+        <id column="id" property="id" />
+            <result column="name" property="name"/>
+            <result column="email" property="email"/>
+            <result column="age" property="age"/>
+    </resultMap>
+    <select id="selectAllStudents" resultMap="studentMap">
+        select id,name,email,age from student
+    </select>
+    <!--列名和属性名不一样:第二种方式
+        resultType的默认原则是同名的列值赋值给同名的属性，使用列别名-->
+
+    <!--第一种like , java代码指定 like的内容-->
+    <select id="selectLikeOne" resultType="org.example.domain.Student">
+        select id,name, email,age from student where name like #{name}
+    </select>
+    <!--第二种like , java拼接 like的内容-->
+    <select id="selectLikeOne1" resultType="org.example.domain.Student">
+        select id,name, email,age from student where name like "%" #{name} "%"
+    </select>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!--    定义sql片段-->
+    <sql id="studentSql">
+        select id,name,age,email from student
+    </sql>
+    <insert id="">
+        <include refid="studentSql"/>
+    </insert>
+
+</mapper>
