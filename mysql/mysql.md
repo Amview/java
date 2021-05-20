@@ -43,7 +43,7 @@ jdbc:mysql://localhost:3306?allowLoadLocalInfile=true
 * 导入csv数据
 
 ```
-load data local infile "D:/Desktop/suicai/1.csv"  into table site_sale  fields  terminated by  ","  lines terminated by "\r\n";
+load data local infile "D:/Desktop/***/1.csv"  into table site_sale  fields  terminated by  ","  lines terminated by "\r\n";
 ```
 
 
